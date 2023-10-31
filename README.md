@@ -18,3 +18,5 @@ $ python -m pip install -r requirements.txt
 $ python -m django --version
 ```
 **Chú ý code trên nhánh Dev**
+
+Test cho nhánh Dev
