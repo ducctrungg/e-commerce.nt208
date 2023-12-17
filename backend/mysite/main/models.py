@@ -7,7 +7,7 @@ class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,null=True, blank=True)
     name = models.CharField(max_length=200, null=True)
     email = models.CharField(max_length=200, null=True)
-    
+    phone = models.CharField(max_length=200, null=True)
     def __str__(self):
         return self.name
     
@@ -15,6 +15,8 @@ class Product(models.Model):
     name = models.CharField(max_length=200, null=True)
     price = models.DecimalField(max_digits=9, decimal_places=2)
     image = models.ImageField(null=True, blank=True)
+    type = models.CharField(max_length=200, null=True)
+    slug = models.SlugField(default="", null=False)
     def __str__(self):
         return self.name
     
@@ -29,8 +31,9 @@ class Product(models.Model):
     
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, blank=True,null=True)
-    date_orderd = models.DateTimeField(auto_now_add=True)
+    address = models.CharField(max_length=200, null=True)
     complete = models.BooleanField(default=False, null=True, blank=False)
+    date_orderd = models.DateTimeField(auto_now_add=True)
     transaction_id = models.CharField(max_length=200, null=True)
 
     def __str__(self):
@@ -64,14 +67,3 @@ class OrderItem(models.Model):
         total = self.product.price * self.quantity
         return total
 
-class ShippingAddress(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, blank=True,null=True)
-    order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=True,null=True)
-    address = models.CharField(max_length=200, null=True)
-    city = models.CharField(max_length=200, null=True)
-    state = models.CharField(max_length=200, null=True)
-    zipcode = models.CharField(max_length=200, null=True)
-    date_added = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.address

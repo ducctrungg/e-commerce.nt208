@@ -22,16 +22,6 @@
                     <div class="form-field">
                         <input class="form-control" type="text" name="address" placeholder="Address..">
                     </div>
-                    <div class="form-field">
-                        <input class="form-control" type="text" name="city" placeholder="City..">
-                    </div>
-                    <div class="form-field">
-                        <input class="form-control" type="text" name="state" placeholder="State..">
-                    </div>
-                    <div class="form-field">
-                        <input class="form-control" type="text" name="zipcode" placeholder="Zip code..">
-                    </div>
-
                 </div>
 
                 <hr>
@@ -97,9 +87,6 @@
 
         var shippingInfo = {
             'address':form.address.value,
-            'city':form.city.value,
-            'state':form.state.value,
-            'zipcode':form.zipcode.value,
         }
 
         if(user == "AnonymousUser")
@@ -124,6 +111,7 @@
                 alert('Transaction completed');  
                 cart = {}
                 document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+            
                 window.location.href = "{% url 'home' %}"
 
                 })
