@@ -79,17 +79,29 @@ def accountPage(request):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def adminPage(request):
-    users = User.objects.all()
+
     customers = Customer.objects.all()
     products = Product.objects.all()
     orderitems = OrderItem.objects.all()
     orders = Order.objects.all()
+    total_orders = 0
+    orders_pending = 0
+    orders_completed = 0
+    for order in orders:
+        if order.complete == False:
+            orders_pending += 1
+        if order.complete == True:
+            orders_completed += 1
+        total_orders += 1
+
     context = {
-        'users':users,
         'customers':customers,
         'products':products,
         'orderitems':orderitems,
         'orders':orders,
+        'total_orders':total_orders,
+        'orders_completed':orders_completed,
+        'orders_pending':orders_pending,
     }
     return render(request, 'main/admin.html', context)
 

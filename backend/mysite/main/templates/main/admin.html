@@ -1,73 +1,181 @@
 {% extends 'main/base.html' %}
 {% load static %}
 {% block content %}
+<style>
+    body{
+        background-color: #ebeff5;
+    }
 
+</style>
 <div class="row">
-    <div class="col-md-5">
-        
+    <div class="col">
+        <div class="col-md">
+            <div class="card text-center text-black mb-3" id="total-orders">
+                <div class="card-header">
+                    <h5 class="card-title">Total Orders</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">{{total_orders}}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="col">
+        <div class="col-md">
+            <div class="card text-center text-black mb-3" id="orders-completed">
+                <div class="card-header">
+                    <h5 class="card-title">Orders Completed</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">{{orders_completed}}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="col-md">
+            <div class="card text-center text-black mb-3" id="orders-pending">
+                    <div class="card-header">
+                        <h5 class="card-title">Orders Pending</h5>
+                    </div>
+                        <div class="card-body">
+                        <h3 class="card-title">{{orders_pending}}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+<div class="row">
+    <div class="col">
+        <div class="col-md-5">
+            <h5>CUSTOMERS:</h5>
+            <hr>
+            <div class="card card-body">
+                <a class="btn btn-outline-secondary btn-sm btn-block" href="#">Create Customer</a>
+                <table class="table table-sm">
+                    <tr> 
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Update</th>
+                        <th>Remove</th>
+                    </tr>
+                    {% for customer in customers%}
+                    <tr>
+                        <td>{{customer.name}}</td>
+                        <td>{{customer.email}}</td>
+                        <td>{{customer.phone}}</td>
+                        <td><a class="btn btn-sm btn-info" href="#">update</a></td>
+                        <td><a class="btn btn-sm btn-danger" href="#">delete</a></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-
-{% for user in users %}
-
-{{user.username}}
-{{user.password}}
-    {% for group in user.groups.all %}
-        {{group.name}}
-    {% endfor%}
-<br>
-{% endfor %}
-<br>
-<br>
-
-{% for customer in customers %}
-
-{{customer.user}}
-{{customer.name}}
-{{customer.email}}
-{{customer.phone}}
-<br>
-
-{% endfor %}
-<br>
-<br>
-{% for product in products %}
-
-{{product.name}}
-{{product.type}}
-{{product.price}}
-{{product.image}}
-{{product.slug}}
-<br>
-{% endfor %}
-<br>
 <br>
 
-{% for orderitem in orderitems %}
+<div class="row">
+    <div class="col">
+        <div class="col-md-7">
+            <H5>ORDERS</H5>
+            <hr>
+            <div class="card card-body">
+                <a class="btn btn-outline-secondary btn-sm btn-block" href="#">Create Order</a>
+                <table class="table table-sm">
+                    <tr>         
+                        <th>Customer</th>
+                        <th>Date Ordered</th>
+                        <th>Address</th>
+                        <th>Completed</th>
+                        <th>Transaction ID</th>
+                        <th>Update</th>
+                        <th>Remove</th>
+                    </tr>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{order.customer}}</td>
+                        <td>{{order.date_ordered}}</td>
+                        <td>{{order.address}}</td>
+                        <td>{{order.complete}}</td>
+                        <td>{{order.transaction_id}}</td>
+                        <td><a class="btn btn-sm btn-info" href="#">update</a></td>
+                        <td><a class="btn btn-sm btn-danger" href="#">delete</a></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>        
+        </div>
+    </div>
+</div>  
 
-{{orderitem.product}}
-{{orderitem.order}}
-{{orderitem.quantity}}
-{{orderitem.date_added}}
 <br>
 
-{% endfor %}
-<br>
-<br>
+<div class="row">
+    <div class="col">
+        <div class="col-md-5">
+            <h5>Product:</h5>
+            <hr>
+            <div class="card card-body">
+                <a class="btn btn-outline-secondary btn-sm btn-block" href="#">Create Product</a>
+                <table class="table table-sm">
+                    <tr> 
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Type</th>
+                        <th>Update</th>
+                        <th>Remove</th>
+                    </tr>
+                    {% for product in products %}
+                    <tr>
+                        <td>{{product.name}}</td>
+                        <td>{{product.price}}</td>
+                        <td>{{product.type}}</td>
+                        <td><a class="btn btn-sm btn-info" href="#">update</a></td>
+                        <td><a class="btn btn-sm btn-danger" href="#">delete</a></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-{% for order in orders %}
-
-{{order.customer}}
-{{order.address}}
-{{order.complete}}
-{{order.date_ordered}}
-{{order.transaction_id}}
-<br>
-
-{% endfor %}
-<br>
-<br>
+<div class="row">
+    <div class="col">
+        <div class="col-md-7">
+            <h5>OrderItem:</h5>
+            <hr>
+            <div class="card card-body">
+                <a class="btn btn-outline-secondary btn-sm btn-block" href="#">Create OrderItem</a>
+                <table class="table table-sm">
+                    <tr> 
+                        <th>Product</th>
+                        <th>Order</th>
+                        <th>Quantity</th>
+                        <th>Date added</th>
+                        <th>Update</th>
+                        <th>Remove</th>
+                    </tr>
+                    {% for orderitem in orderitems %}
+                    <tr>
+                        <td>{{orderitem.product}}</td>
+                        <td>{{orderitem.order}}</td>
+                        <td>{{orderitem.quantity}}</td>
+                        <td>{{orderitem.date_added}}</td>
+                        <td><a class="btn btn-sm btn-info" href="#">update</a></td>
+                        <td><a class="btn btn-sm btn-danger" href="#">delete</a></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

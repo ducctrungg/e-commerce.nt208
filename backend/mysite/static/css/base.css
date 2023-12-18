@@ -97,3 +97,15 @@ h1,h2,h3,h4,h5,h6{
 .hidden{
 	display: none!important;
 }
+
+#total-orders{
+	background-color: #4cb4c7;
+}
+
+#orders-completed{
+	background-color: #7abecc;
+}
+
+#orders-pending{
+	background-color: #7CD1C0;
+}
