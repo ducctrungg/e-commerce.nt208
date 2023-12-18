@@ -1,0 +1,73 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-5">
+        
+
+    </div>
+</div>
+
+
+
+{% for user in users %}
+
+{{user.username}}
+{{user.password}}
+    {% for group in user.groups.all %}
+        {{group.name}}
+    {% endfor%}
+<br>
+{% endfor %}
+<br>
+<br>
+
+{% for customer in customers %}
+
+{{customer.user}}
+{{customer.name}}
+{{customer.email}}
+{{customer.phone}}
+<br>
+
+{% endfor %}
+<br>
+<br>
+{% for product in products %}
+
+{{product.name}}
+{{product.type}}
+{{product.price}}
+{{product.image}}
+{{product.slug}}
+<br>
+{% endfor %}
+<br>
+<br>
+
+{% for orderitem in orderitems %}
+
+{{orderitem.product}}
+{{orderitem.order}}
+{{orderitem.quantity}}
+{{orderitem.date_added}}
+<br>
+
+{% endfor %}
+<br>
+<br>
+
+{% for order in orders %}
+
+{{order.customer}}
+{{order.address}}
+{{order.complete}}
+{{order.date_ordered}}
+{{order.transaction_id}}
+<br>
+
+{% endfor %}
+<br>
+<br>
+{% endblock %}

@@ -53,6 +53,7 @@
           cart={}
           document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
       }
+      
     </script>
 
 </head>
@@ -68,14 +69,30 @@
             <li class="nav-item active">
               <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
             </li>
-       
           </ul>
+          {% if request.user.groups.exists %}
+            {% for group in request.user.groups.all %}
+              {% if group.name == 'admin' %}
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'admin' %}">Admin <span class="sr-only">(current)</span></a>
+            </li>
+          </ul>
+              {% endif %}
+            {% endfor%}
+          {% endif %}
+
           <div class="form-inline my-2 my-lg-0">
-               <a href="login/"class="btn btn-warning">Login</a>
-               <a href="logout/"class="btn btn-warning">Logout</a>
-               <a href="#">Hello, {{request.user}}</a>
-               <a href="{% url 'cart' %}">
-                  <img  id="cart-icon" src="{% static 'images/cart.png' %}">
+              {% if request.user.is_authenticated == False %}
+              <a href="login/"class="btn btn-warning">Login</a>
+              {% endif %}
+              
+              {% if request.user.is_authenticated %}
+              <a href="logout/"class="btn btn-warning">Logout</a>
+              {% endif %}
+              <a href="account/">Hello, {{request.user}}</a>
+              <a href="{% url 'cart' %}">
+                <img  id="cart-icon" src="{% static 'images/cart.png' %}">
               </a>
               <p id="cart-total">{{order.get_cart_items}}</p>
   
