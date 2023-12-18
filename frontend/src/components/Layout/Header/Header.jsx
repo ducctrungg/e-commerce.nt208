@@ -18,7 +18,6 @@ const settings = ['Profile', 'Order', 'Wish List', 'Payments', 'Logout']
 
 export default function Header(props) {
   const [auth, setAuth] = useState(false);
-  const [anchorNavMenu, setAnchorNavMenu] = useState(null);
   const [anchorUserMenu, setAnchorUserMenu] = useState(null);
 
   const authHandler = (event) => {
