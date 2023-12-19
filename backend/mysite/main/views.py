@@ -5,11 +5,13 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.utils.text import slugify
 import json
 import datetime
 from .models import *
 from .utils import *
 from .decorators import *
+from .forms import *
 # Create your views here.
 
 def home(request):
@@ -155,6 +157,7 @@ def updateItem(request):
 
     return JsonResponse('Item was added', safe=False)
 
+@login_required(login_url='login')
 def processOrder(request):
     transaction_id = datetime.datetime.now().timestamp()
     data = json.loads(request.body)
@@ -171,3 +174,153 @@ def processOrder(request):
     else:
         print("User not log in")
     return JsonResponse("Payment submitted",safe=False)
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def createOrder(request):
+    form = OrderForm()
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('admin')
+    
+    context = {
+        'form':form,
+    }
+    return render(request, 'main/order_form.html', context)
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def createOrderItem(request):
+    form = OrderItemForm()
+    if request.method == 'POST':
+        form = OrderItemForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('admin')
+    
+    context = {
+        'form':form,
+    }
+    return render(request, 'main/orderitem_form.html', context)
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def createProduct(request):
+    form = ProductForm()
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            form.save()
+            product = Product.objects.get(name=name)
+            product.slug = slugify(name)
+            product.save()
+            return redirect('admin')
+    context = {
+        'form':form,
+    }
+    return render(request, 'main/product_form.html', context)
+
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def updateOrder(request, pk):
+    order = Order.objects.get(id=pk)
+    form = OrderForm(instance=order)
+
+    if request.method == 'POST':
+        form = OrderForm(request.POST, instance=order)
+        if form.is_valid():
+            form.save()
+            return redirect('admin')
+    
+    context = {
+        'form':form,
+    }
+    return render(request, 'main/order_form.html', context)
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def updateOrderItem(request, pk):
+    orderItem = OrderItem.objects.get(id=pk)
+    form = OrderItemForm(instance=orderItem)
+
+    if request.method == 'POST':
+        form = OrderItemForm(request.POST, instance=orderItem)
+        if form.is_valid():
+            form.save()
+            return redirect('admin')
+    
+    context = {
+        'form':form,
+    }
+    return render(request, 'main/orderitem_form.html', context)
+
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def updateProduct(request, pk):
+    product = Product.objects.get(id=pk)
+    form = ProductForm(instance=product)
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            product.slug = slugify(form.cleaned_data['name'])
+            form.save()
+            return redirect('admin')
+    context = {
+        'form':form,
+        'slug':product.slug
+    }
+    return render(request, 'main/product_form.html', context)
+
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def deleteOrder(request, pk):
+    order = Order.objects.get(id=pk)
+    if request.method == 'POST':
+        order.delete()
+        return redirect('admin')
+    context = {
+        'item':order
+    }
+    return render(request, 'main/delete.html', context)
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def deleteCustomer(request, pk):
+    customer = User.objects.get(id=pk)
+    if request.method == 'POST':
+        customer.delete()
+        return redirect('admin')
+    context = {
+        'item':customer
+    }
+    return render(request, 'main/delete.html', context)
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def deleteProduct(request, pk):
+    product = Product.objects.get(id=pk)
+    if request.method == 'POST':
+        product.delete()
+        return redirect('admin')
+    context = {
+        'item':product
+    }
+    return render(request, 'main/delete.html', context)
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def deleteOrderItem(request, pk):
+    orderItem = OrderItem.objects.get(id=pk)
+    if request.method == 'POST':
+        orderItem.delete()
+        return redirect('admin')
+    context = {
+        'item':orderItem
+    }
+    return render(request, 'main/delete.html', context)

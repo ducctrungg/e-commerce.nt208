@@ -1,5 +1,8 @@
 {% extends 'main/base.html' %}
 {% load static %}
 {% block content %}
-
+<p>Username: {{customer.user.username}}<p>
+<p>Name: {{customer.name}}</p>
+<p>Email: {{customer.email}}</p>
+<p>Phone: {{customer.phone}}</p>
 {% endblock %}
