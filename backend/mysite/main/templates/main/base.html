@@ -8,11 +8,11 @@
     integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nhom3</title>
+  <title>UIT Website</title>
   <script type="text/javascript">
 
     var user = '{{request.user}}'
-    console.log("user:", user)
+    console.log("User:", user)
     function getToken(name) {
       var cookieValue = null;
       if (document.cookie && document.cookie !== '') {
@@ -75,23 +75,23 @@
       </div>
 
       {% if request.user.is_authenticated == False %}
-      <div class="text-end">
-        <a type="button" href="login/" class="btn btn-secondary me-2">Login</a>
-        <a type="button" href="register/" class="btn btn-primary">Register</a>
-      </div>
-      {% endif %}
-      {% if request.user.is_authenticated %}
-      <a class="position-relative" href="{% url 'cart_test' %}">
+      <a class="position-relative me-3" href="{% url 'cart' %}">
         <i class="bi bi-cart-fill fs-4"></i>
         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
           {{order.get_cart_items}}
           <span class="visually-hidden">number cart add</span>
         </span>
       </a>
+      <div class="text-end">
+        <a type="button" href="login/" class="btn btn-secondary me-2">Login</a>
+        <a type="button" href="register/" class="btn btn-primary">Register</a>
+      </div>
+      {% endif %}
+      {% if request.user.is_authenticated %}
       <div class="dropdown text-end ms-4">
         <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown"
           aria-expanded="false">
-          <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+          <i class="bi bi-person-circle fs-3"></i>
         </a>
         <ul class="dropdown-menu text-small">
           <li><a class="dropdown-item" href="#">Settings</a></li>
@@ -118,7 +118,7 @@
     {% endif %} -->
   <hr>
   <main class="container">
-    <div class="p-5 rounded">
+    <div class="py-5">
       {% block content %}
 
       {% endblock content %}

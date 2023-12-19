@@ -24,7 +24,6 @@ def home(request):
 
 def productDetails(request, slug):
     product = Product.objects.get(slug=slug)
-
     context = {'product':product}
     return render(request, 'main/product.html', context)
 
@@ -79,7 +78,6 @@ def accountPage(request):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def adminPage(request):
-
     customers = Customer.objects.all()
     products = Product.objects.all()
     orderitems = OrderItem.objects.all()
@@ -120,7 +118,7 @@ def cartTest(request):
         'items':cartData['items'],
         'order':cartData['order'],
     }
-    return render(request, 'main/cart_test.html', context)
+    return render(request, 'main/cart_old.html', context)
 
 @login_required(login_url='login')
 def checkout(request):
