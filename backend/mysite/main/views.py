@@ -114,6 +114,14 @@ def cart(request):
     }
     return render(request, 'main/cart.html', context)
 
+def cartTest(request):
+    cartData = getCartData(request)
+    context={
+        'items':cartData['items'],
+        'order':cartData['order'],
+    }
+    return render(request, 'main/cart_test.html', context)
+
 @login_required(login_url='login')
 def checkout(request):
     cartData = getCartData(request)
