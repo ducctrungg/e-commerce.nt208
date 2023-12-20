@@ -1,6 +1,6 @@
-var updateBtns = document.getElementsByClassName('update-cart')
-for (var i = 0; i < updateBtns.length; i++) {
-  updateBtns[i].addEventListener('click', function () {
+let listUpdateItem = document.getElementsByClassName('update-cart')
+Array.from(listUpdateItem).forEach(function (item) {
+  item.addEventListener('click', function () {
     var productID = this.dataset.product
     var action = this.dataset.action
     if (user == "AnonymousUser") {
@@ -12,7 +12,7 @@ for (var i = 0; i < updateBtns.length; i++) {
       updateUserOrder(productID, action)
     }
   })
-}
+})
 
 function addCookieItem(productID, action) {
   if (action == 'add') {
@@ -33,7 +33,6 @@ function addCookieItem(productID, action) {
   document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
   location.reload()
 }
-
 
 function updateUserOrder(productID, action) {
   console.log('User is authenticated, sending data...')

@@ -10,7 +10,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>UIT Website</title>
   <script type="text/javascript">
-
     var user = '{{request.user}}'
     console.log("User:", user)
     function getToken(name) {
@@ -28,7 +27,6 @@
       return cookieValue;
     }
     var csrftoken = getToken('csrftoken')
-
     function getCookie(name) {
       // Split cookie string and get all individual name=value pairs in an array
       var cookieArr = document.cookie.split(";");
@@ -56,38 +54,38 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-white border-bottom">
+  <nav class="navbar navbar-expand-md fixed-top bg-white border-bottom">
     <div class="container p-2">
-      <a href="{% url 'home' %}"
-        class="d-flex align-items-center mb-2 mb-lg-0 text-decoration-none text-dark navbar-brand fs-5">
-        UIT Website
-      </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
         aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+      <a href="{% url 'home' %}"
+        class="align-items-center mb-2 mb-lg-0 text-decoration-none text-dark navbar-brand fs-5">
+        UIT Website
+      </a>
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav me-auto mb-2 mb-md-0">
           <li class="nav-item"><a href="{% url 'home' %}" class="nav-link text-dark px-2">Home</a></li>
-          <li class="nav-item"><a href="#" class="nav-link text-dark px-2">FAQs</a></li>
-          <li class="nav-item"><a href="#" class="nav-link text-dark px-2">About</a></li>
+          <li class="nav-item"><a href="{% url 'home' %}" class="nav-link text-dark px-2">Product</a></li>
         </ul>
+        <form class="d-flex" role="search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        </form>
       </div>
 
-      {% if request.user.is_authenticated == False %}
-      <a class="position-relative me-3" href="{% url 'cart' %}">
-        <i class="bi bi-cart-fill fs-4"></i>
+      <a class="position-relative me-3 text-dark-emphasis d-none d-md-block" href="{% url 'cart' %}">
+        <i class="bi bi-cart2 fs-4"></i>
         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
           {{order.get_cart_items}}
           <span class="visually-hidden">number cart add</span>
         </span>
       </a>
-      <div class="text-end">
-        <a type="button" href="login/" class="btn btn-secondary me-2">Login</a>
-        <a type="button" href="register/" class="btn btn-primary">Register</a>
-      </div>
-      {% endif %}
-      {% if request.user.is_authenticated %}
+      {% if request.user.is_authenticated == False %}
+      <a href="{% url 'login' %}" class="d-block link-body-emphasis text-decoration-none text-dark-emphasis">
+        <i class="bi bi-person-circle fs-3"></i>
+      </a>
+      {% else %}
       <div class="dropdown text-end ms-4">
         <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown"
           aria-expanded="false">
@@ -99,7 +97,7 @@
           <li>
             <hr class="dropdown-divider">
           </li>
-          <li><a class="dropdown-item" href="logout/">Sign out</a></li>
+          <li><a class="dropdown-item" href="/logout">Sign out</a></li>
         </ul>
       </div>
       {% endif %}
@@ -129,35 +127,32 @@
     <footer class="py-5">
       <div class="row">
         <div class="col-6 col-md-2 mb-3">
-          <h5>Section</h5>
+          <h5>Store</h5>
           <ul class="nav flex-column">
-            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
-            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
-            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
-            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
-            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About us</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Find Store</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Categories</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Blogs</a></li>
           </ul>
         </div>
 
         <div class="col-6 col-md-2 mb-3">
-          <h5>Section</h5>
+          <h5>Information</h5>
           <ul class="nav flex-column">
-            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
-            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
-            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
-            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
-            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Help center</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Money refund</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Shipping info</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Refunds</a></li>
           </ul>
         </div>
 
         <div class="col-6 col-md-2 mb-3">
-          <h5>Section</h5>
+          <h5>Support</h5>
           <ul class="nav flex-column">
-            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Documnents</a></li>
             <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
             <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
-            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
-            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">My orders</a></li>
           </ul>
         </div>
 
