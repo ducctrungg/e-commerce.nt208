@@ -223,6 +223,28 @@ def createProduct(request):
     }
     return render(request, 'main/product_form.html', context)
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def createCustomer(request):
+    form = UserCreationForm()
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            name = form.cleaned_data.get('username')
+            messages.success(request, 'Account was created for ' + name)
+            email = request.POST.get('email')
+            phone = request.POST.get('phone')
+            user = User.objects.get(username=name)
+            group = Group.objects.get(name='customer')
+            user.groups.add(group)
+            customer = Customer.objects.create(user=user,email=email,phone=phone,name=name)
+            customer.save()
+            return redirect('admin')
+    
+    context = {'form':form}
+    return render(request, 'main/register.html', context)
+
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -275,6 +297,32 @@ def updateProduct(request, pk):
         'slug':product.slug
     }
     return render(request, 'main/product_form.html', context)
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def updateCustomer(request, pk):
+    user = User.objects.get(id=pk)
+    customer = Customer.objects.get(user=user)
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        #validate data before saving
+        if password != "":
+            user.set_password(password)
+
+        customer.name = name
+        customer.email = email
+        customer.phone = phone
+        customer.save()
+        user.save()
+        return redirect('admin')
+    context = {
+        'user':user,
+        'customer':customer
+    }
+    return render(request, 'main/customer_form.html', context)
 
 
 @login_required(login_url='login')

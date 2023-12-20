@@ -18,10 +18,14 @@ urlpatterns = [
     path('create_order/',views.createOrder, name='create_order'),
     path('create_orderitem/',views.createOrderItem, name='create_orderitem'),
     path('create_product/',views.createProduct, name='create_product'),
+    path('create_customer/',views.createCustomer, name='create_customer'),
+
 
     path('update_order/<str:pk>',views.updateOrder, name='update_order'),
     path('update_orderitem/<str:pk>',views.updateOrderItem, name='update_orderitem'),
     path('update_product/<str:pk>',views.updateProduct, name='update_product'),
+    path('update_customer/<str:pk>',views.updateCustomer, name='update_customer'),
+
 
     path('delete_order/<str:pk>',views.deleteOrder, name='delete_order'),
     path('delete_customer/<str:pk>',views.deleteCustomer, name='delete_customer'),
