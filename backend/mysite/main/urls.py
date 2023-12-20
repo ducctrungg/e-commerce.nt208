@@ -9,7 +9,6 @@ urlpatterns = [
     path('account/',views.accountPage, name='account'),
     path('admin/',views.adminPage, name='admin'),
     path('cart/',views.cart, name='cart'),
-    path('cart_test/',views.cartTest, name='cart_test'),
     path('checkout/',views.checkout, name='checkout'),
     path('products/<slug:slug>',views.productDetails, name='productDetails'),
     path('update_item/', views.updateItem, name="update_item"),
@@ -28,4 +27,5 @@ urlpatterns = [
     path('delete_orderitem/<str:pk>',views.deleteOrderItem, name='delete_orderitem'),
     path('delete_product/<str:pk>',views.deleteProduct, name='delete_product'),
 
+    path('dashboard/',views.dashboardPage, name='process_order'),
 ]

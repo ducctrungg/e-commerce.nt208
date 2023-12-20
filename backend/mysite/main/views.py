@@ -114,13 +114,6 @@ def cart(request):
     }
     return render(request, 'main/cart.html', context)
 
-def cartTest(request):
-    cartData = getCartData(request)
-    context={
-        'items':cartData['items'],
-        'order':cartData['order'],
-    }
-    return render(request, 'main/cart_old.html', context)
 
 @login_required(login_url='login')
 def checkout(request):
@@ -324,3 +317,6 @@ def deleteOrderItem(request, pk):
         'item':orderItem
     }
     return render(request, 'main/delete.html', context)
+
+def dashboardPage(request):
+    return render(request, 'main/dashboard.html')
