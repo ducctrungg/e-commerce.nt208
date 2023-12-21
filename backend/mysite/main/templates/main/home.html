@@ -39,7 +39,7 @@
   {% for product in products %}
   <div class="col-sm-6 col-md-3 mb-3">
     <div class="card">
-      <a href="products/{{product.slug}}" class="link-dark" style="text-decoration: none;">
+      <a href="{% url 'productDetails' product.slug %}" class="link-dark" style="text-decoration: none;">
         <img src="{{product.imageURL}}" class="card-img-top">
       </a>
       <div class="card-body">

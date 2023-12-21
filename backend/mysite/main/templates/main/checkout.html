@@ -160,7 +160,7 @@
               class="img-sm rounded border" />
           </div>
           <div class="">
-            <a href="#" class="nav-link">
+            <a href="{% url 'productDetails' item.product.slug %}" class="nav-link">
               {{item.product.name}} <br />
             </a>
             <div class="price text-muted">Total: ${{item.get_total|floatformat:2}}</div>

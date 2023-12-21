@@ -29,7 +29,9 @@
         <label class="form-label" for="phone">Phonenumber</label>
         <input type="phone" name="phone" id="phone" value="{{customer.phone}}r">
     </div>
-
+    {% for message in messages %}
+    <p id="messages mt-2 text-danger fw-bold">{{message}}</p>
+    {% endfor %}
     <button class="btn btn-primary w-10 py-2" type="submit" value="Save">Save</button>
 </form>
 

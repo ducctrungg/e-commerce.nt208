@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-
+# this file set routing in web
 urlpatterns = [
     path('',views.home, name='home'),
     path('login/',views.loginPage, name='login'),
