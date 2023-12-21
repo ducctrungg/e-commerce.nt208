@@ -181,17 +181,16 @@ def updateItem(request):    # update cart for authenticated user | unauthenticat
 
 @login_required(login_url='login') 
 def processOrder(request):  # save order for checkout
-    transaction_id = datetime.datetime.now().timestamp()
-    data = json.loads(request.body)
-    customer = request.user.customer
-    order, created = Order.objects.get_or_create(customer=customer, complete=False)
-    total = float(data['form']['total'])
-    order.transaction_id = transaction_id
-    order.address = data['shipping']['address']
-    if total == order.get_cart_total:
+    if request.method == 'POST':
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        order.address = request.POST.get('address')
         order.complete = True
-    order.date_ordered = datetime.datetime.now()
-    order.save()
+        transaction_id = datetime.datetime.now().timestamp()
+        order.transaction_id = transaction_id
+        order.date_ordered = datetime.datetime.now()
+        order.save()
+        return redirect('home')
 
     return JsonResponse("Payment submitted",safe=False)
 

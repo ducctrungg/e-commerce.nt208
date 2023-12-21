@@ -31,5 +31,5 @@ urlpatterns = [
     path('delete_orderitem/<str:pk>',views.deleteOrderItem, name='delete_orderitem'),
     path('delete_product/<str:pk>',views.deleteProduct, name='delete_product'),
 
-    path('dashboard/',views.dashboardPage, name='process_order'),
+    path('dashboard/',views.dashboardPage, name='dashboard'),
 ]
