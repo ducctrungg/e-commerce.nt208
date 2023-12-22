@@ -16,6 +16,12 @@
       max-width: 400px;
       padding: 1.2rem;
     }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
   </style>
 
 </head>
@@ -26,17 +32,23 @@
       {% csrf_token %}
       <h1 class="mb-3 fw-bold">Sign in</h1>
       <div class="mb-3">
-        <label class="form-label" for="username">Username</label>
+        <label class="form-label" for="{{form.username.id_forlabel}}">Username</label>
         <input type="text" class="form-control" name="username" id="username" placeholder="Enter username">
+        <div class="mt-2 text-danger fw-bold">
+          {{ form.username.errors }}
+        </div>
       </div>
       <div class="mb-3">
-        <label class="form-label" for="password">Password</label>
+        <label class="form-label" for="{{form.password.id_forlabel}}">Password</label>
         <input type="password" class="form-control" name="password" id="password" placeholder="Enter password">
+        <div class="mt-2 text-danger fw-bold">
+          {{ form.password.errors }}
+        </div>
       </div>
       <button class="btn btn-primary w-100 py-2" type="submit" value="Login">Login</button>
     </form>
     {% for message in messages %}
-    <p id="messages mt-2 text-danger fw-bold">{{message}}</p>
+    <p class="mt-2 text-danger fw-bold">{{message}}</p>
     {% endfor %}
     <div class="mt-4">
       <div class="d-flex justify-content-center links">

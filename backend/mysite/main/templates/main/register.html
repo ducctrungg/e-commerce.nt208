@@ -10,7 +10,7 @@
   <style>
     body,
     html {
-      height: 100%;
+      min-height: 100%;
     }
 
     .form-register {
@@ -32,32 +32,38 @@
       {% csrf_token %}
       <h1 class="mb-3 fw-bold text-center">Register</h1>
       <div class="mb-3">
-        <label class="form-label" for="username">Username</label>
-        {{form.username}}
-        <div class="mt-2 text-danger fw-bold">
-          {{form.errors.username}}
+        <label class="form-label" for="{{ form.name.id_for_label }}">Username</label>
+        {{form.name}}
+        <div class="mt-1 text-danger fw-bold">
+          {{ form.name.errors }}
         </div>
       </div>
       <div class="mb-3">
-        <label class="form-label" for="email">Email</label>
-        <input type="email" name="email" id="email" placeholder="Enter email">
-      </div>  
-      <div class="mb-3">
-        <label class="form-label" for="phone">Phonenumber</label>
-        <input type="phone" name="phone" id="phone" placeholder="Enter phonenumber">
+        <label class="form-label" for="{{ form.email.id_for_label }}">Email</label>
+        {{form.email}}
+        <div class="mt-1 text-danger fw-bold">
+          {{ form.email.errors }}
+        </div>
       </div>
       <div class="mb-3">
-        <label class="form-label" for="password">Password</label>
+        <label class="form-label" for="{{ form.email.id_for_label }}">Phonenumber</label>
+        {{form.phone}}
+        <div class="mt-1 text-danger fw-bold">
+          {{ form.phone.errors }}
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="{{ form.password1.id_for_label }}">Password</label>
         {{form.password1}}
-        <div class="mt-2 text-danger fw-bold">
-          {{form.errors.password1}}
+        <div class="mt-1 text-danger fw-bold">
+          {{ form.password1.errors }}
         </div>
       </div>
       <div class="mb-3">
-        <label class="form-label" for="password">Password confirm</label>
+        <label class="form-label" for="{{ form.password2.id_for_label }}">Password confirm</label>
         {{form.password2}}
-        <div class="mt-2 text-danger fw-bold">
-          {{form.errors.password2}}
+        <div class="mt-1 text-danger fw-bold">
+          {{form.password2.errors}}
         </div>
       </div>
       {% for message in messages %}
@@ -70,7 +76,7 @@
         Already have an account ?<a href="{% url 'login' %}" class="ml-2">Login</a>
       </div>
     </div>
-  </main>
+  </main> 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"
     integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
@@ -80,7 +86,9 @@
     $().ready(() => {
       $('input').addClass('form-control');
       $('input').attr('required', true);
-      $('#id_username').attr('placeholder', 'Enter username');
+      $('#id_name').attr('placeholder', 'Enter username');
+      $('#id_email').attr('placeholder', 'Enter email');
+      $('#id_phone').attr('placeholder', 'Enter phone');
       $('#id_password1').attr('placeholder', 'Enter password');
       $('#id_password2').attr('placeholder', 'Re-enter Password');
     })

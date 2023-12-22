@@ -14,67 +14,67 @@ from .decorators import *
 from .forms import *
 # Create your views here.
 
+
 def home(request):
     cartData = getCartData(request)
 
-    products= Product.objects.all() # SELECT ALL PRODUCTS FROM DATABASE
-    context={
-        'products':products,
+    products = Product.objects.all()  # SELECT ALL PRODUCTS FROM DATABASE
+    context = {
+        'products': products,
         'order': cartData['order'],
     }
     return render(request, 'main/home.html', context)
 
+
 def productDetails(request, slug):
-    product = Product.objects.get(slug=slug) # SELECT a product that has the same slug as the slug from URL
-    context = {'product':product}
+    # SELECT a product that has the same slug as the slug from URL
+    product = Product.objects.get(slug=slug)
+    context = {'product': product}
     return render(request, 'main/product.html', context)
+
 
 @unauthenticated_user   # only allow unauthenticated user use login module
 def loginPage(request):
     if request.method == 'POST':    # If receive data from user, authenticate user
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:    # If user is valid, login
-            login(request, user)
-            return redirect('home')
-        else:                   # If show out error
-            messages.info(request, 'Username OR Password is in correct')
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+            user = authenticate(request, username=username, password=password)
+            if user is not None:    # If user is valid, login
+                login(request, user)
+                return redirect('home')
+            else:                   # If show out error
+                messages.info(request, 'Username or Password is incorrect')
+    else:
+        form = LoginForm()
+    return render(request, 'main/login.html', {"form": form})
 
-    context = {}
-    return render(request, 'main/login.html', context)
 
-@login_required(login_url='login') # need to login for logout module
-def logoutUser(request):    
+@login_required(login_url='login')  # need to login for logout module
+def logoutUser(request):
     logout(request)
     return redirect('home')
-        
-@unauthenticated_user # only allow unauthenticated user use login module
+
+@unauthenticated_user  # only allow unauthenticated user use login module
 def registerPage(request):
-    form = UserCreationForm()   
     if request.method == 'POST':    # If receive data from user
-        form = UserCreationForm(request.POST)
-        if form.is_valid(): # validate username and password1, password2 | password2 is password confirm
-            name = form.cleaned_data.get('username')
-            email = request.POST.get('email')
-            phone = request.POST.get('phone')
-            if not validate_email(email):   # validate data
-                messages.error(request, 'Invalid email address')
-                return redirect('register')
-            if not validate_phone(phone):
-                messages.error(request, 'Invalid phone number')
-                return redirect('register')
-            form.save()
-            user = User.objects.get(username=name)
+        form = RegisterForm(request.POST)
+        if form.is_valid():  # validate username and password1, password2 | password2 is password confirm
+            register = form.save(commit=False)
+            usercreate = UserCreationForm(username=register.name,  
+                             password1=register.password1, password2=register.password2)
+            user = User.objects.get(username=register.name)
             group = Group.objects.get(name='customer')
             user.groups.add(group)
-            customer = Customer.objects.create(user=user,email=email,phone=phone,name=name)
-            customer.save()
-            messages.success(request, 'Account was created for ' + name)
+            register.user = register.name
+            register.save()
+            messages.success(request, 'Account was created for ' + register.name)
             return redirect('login')
-    
-    context = {'form':form}
-    return render(request, 'main/register.html', context)
+    else:
+        form = RegisterForm()
+    return render(request, 'main/register.html',  {"form": form})
+
 
 @login_required(login_url='login')   # need to login for account module
 def accountPage(request):
@@ -84,7 +84,7 @@ def accountPage(request):
         name = request.POST.get('name')
         email = request.POST.get('email')
         phone = request.POST.get('phone')
-        if not validate_name(name): # validate data
+        if not validate_name(name):  # validate data
             messages.error(request, 'Invalid name')
             return redirect('account')
         if not validate_email(email):
@@ -101,12 +101,13 @@ def accountPage(request):
         customer.save()
         return redirect('account')
     context = {
-        'customer':customer
+        'customer': customer
     }
     return render(request, 'main/account.html', context)
 
+
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['admin']) # only allow admin
+@allowed_users(allowed_roles=['admin'])  # only allow admin
 def adminPage(request):
     customers = Customer.objects.all()
     products = Product.objects.all()
@@ -125,7 +126,8 @@ def adminPage(request):
         total_orders += 1
     if request.method == 'POST':
         if 'productType_submit' in request.POST:
-            product_type = request.POST.get('product_type') # get product type from user for searching
+            # get product type from user for searching
+            product_type = request.POST.get('product_type')
             if product_type == "":
                 messages.error(request, 'Empty product type')
             else:
@@ -134,7 +136,7 @@ def adminPage(request):
             date_ordered = request.POST.get('date_ordered')
             if date_ordered != "":
                 total_orders = 0
-                total_income = 0 
+                total_income = 0
                 orders_pending = 0
                 orders_completed = 0
                 temp = []
@@ -150,48 +152,54 @@ def adminPage(request):
                 orders = temp
 
     context = {
-        'customers':customers,
-        'products':products,
-        'orderitems':orderitems,
-        'orders':orders,
-        'total_orders':total_orders,
-        'total_income':total_income,
-        'orders_completed':orders_completed,
-        'orders_pending':orders_pending,
+        'customers': customers,
+        'products': products,
+        'orderitems': orderitems,
+        'orders': orders,
+        'total_orders': total_orders,
+        'total_income': total_income,
+        'orders_completed': orders_completed,
+        'orders_pending': orders_pending,
     }
     return render(request, 'main/admin.html', context)
+
 
 def cart(request):
     cartData = getCartData(request)
 
-    context={
-        'items':cartData['items'],
-        'order':cartData['order'],
+    context = {
+        'items': cartData['items'],
+        'order': cartData['order'],
     }
     return render(request, 'main/cart.html', context)
 
 
-@login_required(login_url='login') # need login for checkout module | only authenticated user can checkout
+# need login for checkout module | only authenticated user can checkout
+@login_required(login_url='login')
 def checkout(request):
     cartData = getCartData(request)
 
-    context={
-        'items':cartData['items'],
-        'order':cartData['order'],
+    context = {
+        'items': cartData['items'],
+        'order': cartData['order'],
     }
     return render(request, 'main/checkout.html', context)
 
+
 @login_required(login_url='login')
-def updateItem(request):    # update cart for authenticated user | unauthenticated user use cookie cart
+# update cart for authenticated user | unauthenticated user use cookie cart
+def updateItem(request):
     data = json.loads(request.body)
     productID = data['productID']
     action = data['action']
 
     customer = request.user.customer
     product = Product.objects.get(id=productID)
-    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    order, created = Order.objects.get_or_create(
+        customer=customer, complete=False)
 
-    orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+    orderItem, created = OrderItem.objects.get_or_create(
+        order=order, product=product)
 
     if action == 'add':
         orderItem.quantity = (orderItem.quantity + 1)
@@ -200,17 +208,19 @@ def updateItem(request):    # update cart for authenticated user | unauthenticat
 
     orderItem.date_added = datetime.datetime.now()
     orderItem.save()
-        
+
     if orderItem.quantity <= 0:
         orderItem.delete()
 
     return JsonResponse('Item was added', safe=False)
 
-@login_required(login_url='login') 
+
+@login_required(login_url='login')
 def processOrder(request):  # save order for checkout
     if request.method == 'POST':
         customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        order, created = Order.objects.get_or_create(
+            customer=customer, complete=False)
         order.address = request.POST.get('address')
         order.complete = True
         transaction_id = datetime.datetime.now().timestamp()
@@ -219,7 +229,8 @@ def processOrder(request):  # save order for checkout
         order.save()
         return redirect('home')
 
-    return JsonResponse("Payment submitted",safe=False)
+    return JsonResponse("Payment submitted", safe=False)
+
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -230,11 +241,12 @@ def createOrder(request):   # admin create
         if form.is_valid():
             form.save()
             return redirect('admin')
-    
+
     context = {
-        'form':form,
+        'form': form,
     }
     return render(request, 'main/order_form.html', context)
+
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -249,15 +261,16 @@ def createOrderItem(request):   # admin create
                 return redirect('create_orderitem')
             form.save()
             return redirect('admin')
-    
+
     context = {
-        'form':form,
+        'form': form,
     }
     return render(request, 'main/orderitem_form.html', context)
 
+
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
-def createProduct(request): # admin create
+def createProduct(request):  # admin create
     form = ProductForm()
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
@@ -273,9 +286,10 @@ def createProduct(request): # admin create
             product.save()
             return redirect('admin')
     context = {
-        'form':form,
+        'form': form,
     }
     return render(request, 'main/product_form.html', context)
+
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -283,11 +297,11 @@ def createCustomer(request):    # admin create
     form = UserCreationForm()
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
-        if form.is_valid(): # validate data
+        if form.is_valid():  # validate data
             name = form.cleaned_data.get('username')
             email = request.POST.get('email')
             phone = request.POST.get('phone')
-            if not validate_email(email): # validate data
+            if not validate_email(email):  # validate data
                 messages.error(request, 'Invalid email address')
                 return redirect('create_customer')
             if not validate_phone(phone):
@@ -297,12 +311,13 @@ def createCustomer(request):    # admin create
             user = User.objects.get(username=name)
             group = Group.objects.get(name='customer')
             user.groups.add(group)
-            customer = Customer.objects.create(user=user,email=email,phone=phone,name=name)
+            customer = Customer.objects.create(
+                user=user, email=email, phone=phone, name=name)
             customer.save()
             messages.success(request, 'Account was created for ' + name)
             return redirect('admin')
-    
-    context = {'form':form}
+
+    context = {'form': form}
     return render(request, 'main/register.html', context)
 
 
@@ -314,17 +329,18 @@ def updateOrder(request, pk):   # admin update
     orderitems = order.orderitem_set.all()
     if request.method == 'POST':
         form = OrderForm(request.POST, instance=order)
-        if form.is_valid(): # validate data
+        if form.is_valid():  # validate data
             form.save()
             return redirect('admin')
-    
+
     context = {
-        'form':form,
-        'orderitems':orderitems,
-        'order':order
+        'form': form,
+        'orderitems': orderitems,
+        'order': order
 
     }
     return render(request, 'main/order_form.html', context)
+
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -334,40 +350,43 @@ def updateOrderItem(request, pk):   # admin update
 
     if request.method == 'POST':
         form = OrderItemForm(request.POST, instance=orderItem)
-        if form.is_valid(): # validate data
+        if form.is_valid():  # validate data
             quantity = form.cleaned_data['quantity']
-            if quantity <= 0: # validate data
+            if quantity <= 0:  # validate data
                 messages.error(request, 'Invalid order item quantity')
-                return redirect('update_orderitem',pk) # redirect to domain/update_orderitem/pk
+                # redirect to domain/update_orderitem/pk
+                return redirect('update_orderitem', pk)
             form.save()
             return redirect('admin')
-    
+
     context = {
-        'form':form,
+        'form': form,
     }
     return render(request, 'main/orderitem_form.html', context)
 
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
-def updateProduct(request, pk): # admin update
+def updateProduct(request, pk):  # admin update
     product = Product.objects.get(id=pk)
     form = ProductForm(instance=product)
-    if request.method == 'POST': 
+    if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES, instance=product)
-        if form.is_valid(): # validate data
+        if form.is_valid():  # validate data
             price = form.cleaned_data['price']
-            if price < 0: # validate data
+            if price < 0:  # validate data
                 messages.error(request, 'Invalid product price')
-                return redirect('update_product',pk)    # redirect to domain/update_product/pk
+                # redirect to domain/update_product/pk
+                return redirect('update_product', pk)
             product.slug = slugify(form.cleaned_data['name'])
             form.save()
             return redirect('admin')
     context = {
-        'form':form,
-        'slug':product.slug
+        'form': form,
+        'slug': product.slug
     }
     return render(request, 'main/product_form.html', context)
+
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -379,15 +398,16 @@ def updateCustomer(request, pk):    # admin update
         name = request.POST.get('name')
         email = request.POST.get('email')
         phone = request.POST.get('phone')
-        if not validate_name(name): # validate data
+        if not validate_name(name):  # validate data
             messages.error(request, 'Invalid name')
-            return redirect('update_customer',pk) # redirect to domain/update_customer/pk
+            # redirect to domain/update_customer/pk
+            return redirect('update_customer', pk)
         if not validate_email(email):
             messages.error(request, 'Invalid email address')
-            return redirect('update_customer',pk)
+            return redirect('update_customer', pk)
         if not validate_phone(phone):
             messages.error(request, 'Invalid phone number')
-            return redirect('update_customer',pk)
+            return redirect('update_customer', pk)
         if password != "":  # check if the password changed| if changed set new password | if not skip set new password
             user.set_password(password)
         customer.name = name
@@ -397,8 +417,8 @@ def updateCustomer(request, pk):    # admin update
         user.save()
         return redirect('admin')
     context = {
-        'user':user,
-        'customer':customer
+        'user': user,
+        'customer': customer
     }
     return render(request, 'main/customer_form.html', context)
 
@@ -411,9 +431,10 @@ def deleteOrder(request, pk):   # admin delete
         order.delete()
         return redirect('admin')
     context = {
-        'item':order
+        'item': order
     }
     return render(request, 'main/delete.html', context)
+
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -423,21 +444,23 @@ def deleteCustomer(request, pk):    # admin delete
         customer.delete()
         return redirect('admin')
     context = {
-        'item':customer
+        'item': customer
     }
     return render(request, 'main/delete.html', context)
 
+
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
-def deleteProduct(request, pk): # admin delete
+def deleteProduct(request, pk):  # admin delete
     product = Product.objects.get(id=pk)
     if request.method == 'POST':
         product.delete()
         return redirect('admin')
     context = {
-        'item':product
+        'item': product
     }
     return render(request, 'main/delete.html', context)
+
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -447,9 +470,10 @@ def deleteOrderItem(request, pk):   # admin delete
         orderItem.delete()
         return redirect('admin')
     context = {
-        'item':orderItem
+        'item': orderItem
     }
     return render(request, 'main/delete.html', context)
+
 
 def dashboardPage(request):
     return render(request, 'main/dashboard.html')
