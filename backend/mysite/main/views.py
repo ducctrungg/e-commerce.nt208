@@ -477,3 +477,7 @@ def deleteOrderItem(request, pk):   # admin delete
 
 def dashboardPage(request):
     return render(request, 'main/dashboard.html')
+
+def handling_404Page(request, exception):
+    context={}
+    return render(request, 'main/404Page.html', context)

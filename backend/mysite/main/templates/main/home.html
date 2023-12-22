@@ -35,7 +35,7 @@
   </button>
 </div>
 
-<div class="row">
+<div class="row" >
   {% for product in products %}
   <div class="col-sm-6 col-md-3 mb-3">
     <div class="card">
@@ -44,13 +44,16 @@
       </a>
       <div class="card-body">
         <h5 class="card-title">{{product.name}}</h5>
-        <p class="card-text">{{product.description}}</p>
+        <p  class="card-text">{{product.description}}</p>
         <button data-product="{{product.id}}" data-action="add" class="btn btn-secondary add-btn update-cart">Add to
           Cart</button>
-        <h4 style="float: right"><strong>${{product.price|floatformat:2}}</strong></h4>
+        <h4  style="float: right"><strong>${{product.price|floatformat:2}}</strong></h4>
       </div>
     </div>
   </div>
   {% endfor %}
+<ul id="products">
+
+<ul>
 </div>
 {% endblock content %}
