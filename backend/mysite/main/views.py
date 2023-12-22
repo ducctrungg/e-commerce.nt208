@@ -112,16 +112,40 @@ def adminPage(request):
     products = Product.objects.all()
     orderitems = OrderItem.objects.all()
     orders = Order.objects.all()
-    #sumarize all order data
     total_orders = 0
     orders_pending = 0
     orders_completed = 0
-    for order in orders:
+    for order in orders:    # Sum all order data in database
         if order.complete == False:
             orders_pending += 1
         if order.complete == True:
             orders_completed += 1
         total_orders += 1
+    if request.method == 'POST':
+        if 'productType_submit' in request.POST:
+            product_type = request.POST.get('product_type') # get product type from user for searching
+            if product_type == "":
+                messages.error(request, 'Empty product type')
+            else:
+                products = Product.objects.filter(type=product_type)
+        if 'dateOrdered_submit' in request.POST:
+            date_ordered = request.POST.get('date_ordered')
+            if date_ordered != "":
+                total_orders = 0
+                orders_pending = 0
+                orders_completed = 0
+                temp = []
+                for order in orders:
+                    if date_ordered == order.date_ordered.strftime('%d/%m/%Y'):
+                        if order.complete == False:
+                            orders_pending += 1
+                        if order.complete == True:
+                            orders_completed += 1
+                        total_orders += 1
+                        temp.append(order)
+                orders = temp
+                
+
 
     context = {
         'customers':customers,
@@ -284,6 +308,7 @@ def createCustomer(request):    # admin create
 def updateOrder(request, pk):   # admin update
     order = Order.objects.get(id=pk)
     form = OrderForm(instance=order)
+    orderitems = order.orderitem_set.all()
     if request.method == 'POST':
         form = OrderForm(request.POST, instance=order)
         if form.is_valid(): # validate data
@@ -292,6 +317,7 @@ def updateOrder(request, pk):   # admin update
     
     context = {
         'form':form,
+        'orderitems':orderitems,
     }
     return render(request, 'main/order_form.html', context)
 

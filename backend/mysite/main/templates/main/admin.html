@@ -49,6 +49,18 @@
     </div>
 </div>
 
+<form action="" method='POST'>
+    {% csrf_token %}
+    <input name="date_ordered" value="">
+    <button class="btn btn-primary w-10 py-2" type="submit" name="dateOrdered_submit" value="dateOrdered_submit">Search</button>
+</form>
+
+{% for message in messages %}
+<div class="row">
+<p id="messages mt-2 text-danger fw-bold">{{message}}</p>
+</div>
+{% endfor %}
+
 <div class="row">
     <div class="col">
         <div class="col-md-8">
@@ -128,6 +140,11 @@
             <hr>
             <div class="card card-body">
                 <a class="btn btn-outline-secondary btn-sm btn-block" href="{% url 'create_product' %}">Create Product</a>
+                <form action="" method='POST'>
+                    {% csrf_token %}
+                    <input name="product_type" value="">
+                    <button class="btn btn-primary w-10 py-2" type="submit" name="productType_submit" value="productType_submit">Search</button>
+                </form>
                 <table class="table table-sm">
                     <tr> 
                         <th>Name</th>
