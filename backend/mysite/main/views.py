@@ -113,6 +113,7 @@ def adminPage(request):
     orderitems = OrderItem.objects.all()
     orders = Order.objects.all()
     total_orders = 0
+    total_income = 0
     orders_pending = 0
     orders_completed = 0
     for order in orders:    # Sum all order data in database
@@ -120,6 +121,7 @@ def adminPage(request):
             orders_pending += 1
         if order.complete == True:
             orders_completed += 1
+            total_income += order.get_cart_total
         total_orders += 1
     if request.method == 'POST':
         if 'productType_submit' in request.POST:
@@ -132,6 +134,7 @@ def adminPage(request):
             date_ordered = request.POST.get('date_ordered')
             if date_ordered != "":
                 total_orders = 0
+                total_income = 0 
                 orders_pending = 0
                 orders_completed = 0
                 temp = []
@@ -141,11 +144,10 @@ def adminPage(request):
                             orders_pending += 1
                         if order.complete == True:
                             orders_completed += 1
+                            total_income += order.get_cart_total
                         total_orders += 1
                         temp.append(order)
                 orders = temp
-                
-
 
     context = {
         'customers':customers,
@@ -153,6 +155,7 @@ def adminPage(request):
         'orderitems':orderitems,
         'orders':orders,
         'total_orders':total_orders,
+        'total_income':total_income,
         'orders_completed':orders_completed,
         'orders_pending':orders_pending,
     }
@@ -318,6 +321,8 @@ def updateOrder(request, pk):   # admin update
     context = {
         'form':form,
         'orderitems':orderitems,
+        'order':order
+
     }
     return render(request, 'main/order_form.html', context)
 
