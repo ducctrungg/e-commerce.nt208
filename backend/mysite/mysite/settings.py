@@ -27,6 +27,9 @@ SECRET_KEY = 'django-insecure-w(u%78=)kzumd*g+1+3t^6qrpfcmu@7mku+vym0v%_yka$9+yu
 DEBUG = True
 
 ALLOWED_HOSTS = []
+# When deploying need to use this to stop django from debug the website and show the custome Page 404
+# DEBUG = False
+# ALLOWED_HOSTS = ["*"]
 
 
 # Application definition

@@ -33,3 +33,4 @@ urlpatterns = [
 
     path('dashboard/',views.dashboardPage, name='dashboard'),
 ]
+
