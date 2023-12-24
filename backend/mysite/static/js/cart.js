@@ -1,19 +1,3 @@
-let listUpdateItem = document.getElementsByClassName('update-cart')
-Array.from(listUpdateItem).forEach(function (item) {
-  item.addEventListener('click', function () {
-    var productID = this.dataset.product
-    var action = this.dataset.action
-    if (user == "AnonymousUser") {
-      //for GUEST
-      addCookieItem(productID, action)
-    }
-    else {
-      //for USER
-      updateUserOrder(productID, action)
-    }
-  })
-})
-
 function addCookieItem(productID, action) {
   if (action == 'add') {
     if (cart[productID] == undefined) {
@@ -34,21 +18,44 @@ function addCookieItem(productID, action) {
   location.reload()
 }
 
-function updateUserOrder(productID, action) {
-  console.log('User is authenticated, sending data...')
-  var url = '/update_item/'
-  fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': csrftoken,
-    },
-    body: JSON.stringify({ 'productID': productID, 'action': action })
-  })
-    .then((response) => {
-      return response.json();
+async function updateUserOrder(data) {
+  let url = '/update_item/'
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        'X-CSRFToken': csrftoken,
+      },
+      body: JSON.stringify(data),
     })
-    .then((data) => {
-      location.reload()
+    const result = await response.json();
+    $(".item-price").each(function () {
+      if ($(this).find(':input').data("product") == result["item"]["product"]){
+        $(this).find(".get_total").html(`$${(result["item"]["quantity"] * 100).toFixed(2)}`)
+      }
     })
+  } catch (error) {
+    console.error("Error:", error);
+  }
 }
+
+
+$().ready(function () {
+  let listUpdate = $(".item-price")
+  listUpdate.on('click', ':input', function (event) {
+    event.preventDefault();
+    let productId = $(this).data('product')
+    let item = parseInt($(this).val())
+    if (user === "AnonymousUser") {
+      //for GUEST
+      addCookieItem(productID, action)
+    }
+    else {
+      //for USER
+      updateUserOrder({ id: productId, quantity: item })
+    }
+  })
+})
+
+

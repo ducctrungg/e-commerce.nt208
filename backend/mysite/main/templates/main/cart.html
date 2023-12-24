@@ -15,20 +15,20 @@
               <div class="me-lg-5">
                 <div class="d-flex">
                   <img src="{{item.product.imageURL}}" class="border rounded me-3" style="width: 96px; height: 96px;" />
-                  <div class="">
+                  <div>
                     <a href="#" class="nav-link">{{item.product.name}}</a>
                     <p class="text-muted">Yellow, Jeans</p>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
+            <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap item-price">
               <div>
-                <input data-action="" data-product="{{item.product.id}}" name="quantity" value="{{item.quantity}}" type="number" class="form-control me-3 update-cart" 
-                  style="width: 70px;" />
+                <input data-product="{{item.product.id}}" name="quantity" value="{{item.quantity}}" type="number"
+                  class="form-control me-3 update-cart" style="width: 70px;" />
               </div>
               <div>
-                <span class="h6">${{item.get_total|floatformat:2}}</span><br />
+                <span class="get_total">${{item.get_total|floatformat:2}}</span><br />
                 <small class="text-muted text-nowrap">${{item.product.price|floatformat:2}} / per item </small>
               </div>
             </div>
@@ -155,5 +155,5 @@
     </div>
   </div>
 </div>
-
+<script type="text/javascript" src="{% static 'js/cart.js' %}"></script>
 {% endblock content %}

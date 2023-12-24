@@ -30,7 +30,6 @@ class Product(models.Model):
             url =''
         return url
 
-    
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, blank=True,null=True)
     address = models.CharField(max_length=200, null=True)

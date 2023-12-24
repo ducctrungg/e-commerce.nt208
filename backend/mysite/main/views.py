@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.forms.models import model_to_dict
 from django.http import JsonResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Group
@@ -56,20 +57,23 @@ def logoutUser(request):
     logout(request)
     return redirect('home')
 
+
 @unauthenticated_user  # only allow unauthenticated user use login module
 def registerPage(request):
     if request.method == 'POST':    # If receive data from user
         form = RegisterForm(request.POST)
         if form.is_valid():  # validate username and password1, password2 | password2 is password confirm
             register = form.save(commit=False)
-            usercreate = UserCreationForm(username=register.name,  
-                             password1=register.password1, password2=register.password2)
-            user = User.objects.get(username=register.name)
+            usercreate = User.objects.create_user(username=form.cleaned_data["name"],
+                                                  password=form.cleaned_data["password1"])
+            usercreate.save()
+            user = User.objects.get(username=form.cleaned_data["name"])
             group = Group.objects.get(name='customer')
             user.groups.add(group)
-            register.user = register.name
+            register.user = user
             register.save()
-            messages.success(request, 'Account was created for ' + register.name)
+            messages.success(
+                request, 'Account was created for ' + register.name)
             return redirect('login')
     else:
         form = RegisterForm()
@@ -189,37 +193,37 @@ def checkout(request):
 @login_required(login_url='login')
 # update cart for authenticated user | unauthenticated user use cookie cart
 def updateItem(request):
-    data = json.loads(request.body)
-    productID = data['productID']
-    action = data['action']
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        customer = request.user.customer
+        product = Product.objects.get(id=data['id'])
+        order, _ = Order.objects.get_or_create(
+            customer=customer, complete=False)
+        orderItem, _ = OrderItem.objects.get_or_create(
+            order=order, product=product)
+        orderItem.quantity = data['quantity']
+        orderItem.date_added = datetime.datetime.now()
+        orderItem.save()
+        if orderItem.quantity <= 0:
+            orderItem.delete()  
 
-    customer = request.user.customer
-    product = Product.objects.get(id=productID)
-    order, created = Order.objects.get_or_create(
-        customer=customer, complete=False)
-
-    orderItem, created = OrderItem.objects.get_or_create(
-        order=order, product=product)
-
-    if action == 'add':
-        orderItem.quantity = (orderItem.quantity + 1)
-    elif action == 'remove':
-        orderItem.quantity = (orderItem.quantity - 1)
-
-    orderItem.date_added = datetime.datetime.now()
-    orderItem.save()
-
-    if orderItem.quantity <= 0:
-        orderItem.delete()
-
-    return JsonResponse('Item was added', safe=False)
+        # cartData = getCartData(request)
+        # items = []
+        # for item in cartData['items']:
+        #     items.append(model_to_dict(item, exclude="date_added"))
+        context = {
+            'status': "Success",
+            'order': model_to_dict(order, exclude="date_ordered"),
+            'item': model_to_dict(orderItem, exclude="date_added"),
+        }
+    return HttpResponse(json.dumps(context), content_type="application/json")
 
 
 @login_required(login_url='login')
 def processOrder(request):  # save order for checkout
     if request.method == 'POST':
         customer = request.user.customer
-        order, created = Order.objects.get_or_create(
+        order, _ = Order.objects.get_or_create(
             customer=customer, complete=False)
         order.address = request.POST.get('address')
         order.complete = True
@@ -228,7 +232,6 @@ def processOrder(request):  # save order for checkout
         order.date_ordered = datetime.datetime.now()
         order.save()
         return redirect('home')
-
     return JsonResponse("Payment submitted", safe=False)
 
 
@@ -478,6 +481,7 @@ def deleteOrderItem(request, pk):   # admin delete
 def dashboardPage(request):
     return render(request, 'main/dashboard.html')
 
+
 def handling_404Page(request, exception):
-    context={}
+    context = {}
     return render(request, 'main/404Page.html', context)
