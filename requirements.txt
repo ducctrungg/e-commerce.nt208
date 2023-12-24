@@ -1,3 +1,5 @@
 django
 simplejson
 Pillow
+gunicorn
+whitenoise
