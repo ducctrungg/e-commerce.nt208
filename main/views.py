@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.text import slugify
+import simplejson
 import json
 import datetime
 from .models import *
@@ -201,22 +202,26 @@ def updateItem(request):
             customer=customer, complete=False)
         orderItem, _ = OrderItem.objects.get_or_create(
             order=order, product=product)
-        orderItem.quantity = data['quantity']
+        if data['action'] == 'change':
+            orderItem.quantity = data['quantity']
+        elif data['action'] == 'add':
+            orderItem.quantity += 1
+        elif data['action'] == 'minus':
+            orderItem.quantity -= 1
         orderItem.date_added = datetime.datetime.now()
         orderItem.save()
         if orderItem.quantity <= 0:
             orderItem.delete()  
 
-        # cartData = getCartData(request)
-        # items = []
-        # for item in cartData['items']:
-        #     items.append(model_to_dict(item, exclude="date_added"))
+        tmp = model_to_dict(order, exclude="date_ordered")
+        tmp['get_cart_total'] = order.get_cart_total
+        tmp['get_cart_items'] = order.get_cart_items
         context = {
             'status': "Success",
-            'order': model_to_dict(order, exclude="date_ordered"),
+            'order': tmp,
             'item': model_to_dict(orderItem, exclude="date_added"),
         }
-    return HttpResponse(json.dumps(context), content_type="application/json")
+    return HttpResponse(simplejson.dumps(context), content_type="application/json")
 
 
 @login_required(login_url='login')
@@ -231,7 +236,7 @@ def processOrder(request):  # save order for checkout
         order.transaction_id = transaction_id
         order.date_ordered = datetime.datetime.now()
         order.save()
-        return redirect('home')
+        return redirect(' ')
     return JsonResponse("Payment submitted", safe=False)
 
 
@@ -480,7 +485,6 @@ def deleteOrderItem(request, pk):   # admin delete
 
 def dashboardPage(request):
     return render(request, 'main/dashboard.html')
-
 
 def handling_404Page(request, exception):
     context = {}

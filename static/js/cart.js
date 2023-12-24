@@ -1,5 +1,6 @@
-function addCookieItem(productID, action) {
-  if (action == 'add') {
+function addCookieItem(data) {
+  let [productID, quantity, action] = [data['id'], data['quantity'], data['action']]
+  if (action === 'add') {
     if (cart[productID] == undefined) {
       cart[productID] = { 'quantity': 1 }
     }
@@ -7,8 +8,13 @@ function addCookieItem(productID, action) {
       cart[productID]['quantity'] += 1
     }
   }
+  if (action === 'change') {
+    cart[productID]['quantity'] = quantity
+  }
+  if (action === 'minus') {
 
-  if (action == 'remove') {
+  }
+  if (action === 'remove') {
     cart[productID]['quantity'] -= 1
     if (cart[productID]['quantity'] <= 0) {
       delete cart[productID]
@@ -30,32 +36,8 @@ async function updateUserOrder(data) {
       body: JSON.stringify(data),
     })
     const result = await response.json();
-    $(".item-price").each(function () {
-      if ($(this).find(':input').data("product") == result["item"]["product"]){
-        $(this).find(".get_total").html(`$${(result["item"]["quantity"] * 100).toFixed(2)}`)
-      }
-    })
+    return result;
   } catch (error) {
     console.error("Error:", error);
   }
 }
-
-
-$().ready(function () {
-  let listUpdate = $(".item-price")
-  listUpdate.on('click', ':input', function (event) {
-    event.preventDefault();
-    let productId = $(this).data('product')
-    let item = parseInt($(this).val())
-    if (user === "AnonymousUser") {
-      //for GUEST
-      addCookieItem(productID, action)
-    }
-    else {
-      //for USER
-      updateUserOrder({ id: productId, quantity: item })
-    }
-  })
-})
-
-
