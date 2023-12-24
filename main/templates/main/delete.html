@@ -1,0 +1,15 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block content %}
+
+<p>Are you sure? Delete "{{item}}"</p>
+
+<form method="POST" action="{{item.id}}">
+    {% csrf_token %}
+    
+    <a href="{% url 'admin' %}">Cancel</a>
+    <button class="btn btn-primary w-10 py-2" type="submit" name="delete">Delete</button>
+
+</form>
+
+{% endblock %}

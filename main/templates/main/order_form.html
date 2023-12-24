@@ -1,0 +1,85 @@
+{% extends "main/base.html" %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <div class="col">
+        <div class="col-md">
+            <div class="card text-center text-black mb-3" id="total-orders">
+                <div class="card-header">
+                    <h5 class="card-title">Total Items</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">{{order.get_cart_items}}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="col-md">
+            <div class="card text-center text-black mb-3" id="total-orders">
+                <div class="card-header">
+                    <h5 class="card-title">Total Income</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">${{order.get_cart_total|floatformat:2}}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="POST" action="">
+    {% csrf_token %}
+
+    {{form.customer.label}}
+    {{form.customer}}
+
+    {{form.address.label}}
+    {{form.address}}
+
+    {{form.complete.label}}
+    {{form.complete}}
+
+    {{form.date_ordered.label}}
+    {{form.date_ordered}}
+
+    {{form.transaction_id.label}}
+    {{form.transaction_id}}
+    {% for message in messages %}
+    <p id="messages mt-2 text-danger fw-bold">{{message}}</p>
+    {% endfor %}
+    <button class="btn btn-primary w-10 py-2" type="submit" value="Save">Save</button>
+</form>
+<div class="row">
+    <div class="col">
+        <div class="col-md-8">
+            <h5>OrderItem:</h5>
+            <hr>
+            <div class="card card-body">
+                <a class="btn btn-outline-secondary btn-sm btn-block" href="{% url 'create_orderitem' %}">Create OrderItem</a>
+                <table class="table table-sm">
+                    <tr> 
+                        <th>ID</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Date added</th>
+                        <th>Update</th>
+                        <th>Remove</th>
+                    </tr>
+                    {% for orderitem in orderitems %}
+                    <tr>
+                        <td>{{orderitem.id}}</td>
+                        <td>{{orderitem.product}}</td>
+                        <td>{{orderitem.quantity}}</td>
+                        <td>{{orderitem.date_added}}</td>
+                        <td><a class="btn btn-sm btn-info" href="{% url 'update_orderitem' orderitem.id %}">update</a></td>
+                        <td><a class="btn btn-sm btn-danger" href="{% url 'delete_orderitem' orderitem.id %}">delete</a></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

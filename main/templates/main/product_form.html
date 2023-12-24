@@ -1,0 +1,30 @@
+{% extends "main/base.html" %}
+{% load static %}
+{% block content %}
+
+<form method="POST" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{form.name.label}}
+    {{form.name}}
+    <br>
+    {{form.price.label}}
+    {{form.price}}
+    <br>
+    {{form.description.label}}
+    {{form.description}}
+    <br>
+    {{form.image.label}}
+    {{form.image}}
+    <br>
+    {{form.type.label}}
+    {{form.type}}
+    <br>
+    <p>Slug: {{slug}}</p>
+    {{form.errors}}
+    {% for message in messages %}
+    <p id="messages mt-2 text-danger fw-bold">{{message}}</p>
+    {% endfor %}
+    <button class="btn btn-primary w-10 py-2" type="submit" value="Save">Save</button>
+</form>
+
+{% endblock content %}
