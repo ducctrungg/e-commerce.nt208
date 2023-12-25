@@ -2,6 +2,12 @@
 {% load static %}
 {% block content %}
 
+<style>
+  img {
+    object-fit: cover;
+  }
+</style>
+
 <div class="my-5">
   <div class="row">
     <!-- Chưa thao tác thêm xóa được -->
@@ -16,20 +22,21 @@
                 <div class="d-flex">
                   <img src="{{item.product.imageURL}}" class="border rounded me-3" style="width: 96px; height: 96px;" />
                   <div>
-                    <a href="#" class="nav-link">{{item.product.name}}</a>
+                    <a href="{% url 'productDetails' item.product.slug %}" class="nav-link">{{item.product.name}}</a>
                     <p class="text-muted">Yellow, Jeans</p>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap item-price">
+            <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap item-price-info">
               <div>
                 <input data-product="{{item.product.id}}" name="quantity" value="{{item.quantity}}" type="number"
                   min="0" class="form-control me-3 update-cart" style="width: 70px;" />
               </div>
               <div>
                 <span class="get_total">${{item.get_total|floatformat:2}}</span><br />
-                <small class="text-muted text-nowrap">${{item.product.price|floatformat:2}} / per item </small>
+                <small class="text-muted text-nowrap item-price">$<span>{{item.product.price|floatformat:2}}</span>/ per
+                  item </small>
               </div>
             </div>
             <div
@@ -100,78 +107,80 @@
   <div class="my-5">
     <h3>Recommended items</h3>
   </div>
-
-  <div class="row">
-    <div class="col-lg-3 col-md-6 col-sm-6">
-      <div class="card px-4 border mb-4 mb-lg-0">
-        <a href="#" class="mt-3">
-          <img src="https://i.dummyjson.com/data/products/1/thumbnail.jpg" class="card-img-top rounded-2" />
-        </a>
-        <div class="card-body d-flex flex-column pt-3 border-top">
-          <a href="#" class="nav-link">Gaming Headset with Mic</a>
-          <div class="price-wrap mb-2">
-            <strong class="">$18.95</strong>
-          </div>
-          <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-            <a href="#" class="btn btn-outline-primary w-100">Add to cart</a>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-3 col-md-6 col-sm-6">
-      <div class="card px-4 border shadow-0 mb-4 mb-lg-0">
-        <a href="#" class="mt-3">
-          <img src="https://i.dummyjson.com/data/products/1/thumbnail.jpg" class="card-img-top rounded-2" />
-        </a>
-        <div class="card-body d-flex flex-column pt-3 border-top">
-          <a href="#" class="nav-link">Apple Watch Series 1 Sport </a>
-          <div class="price-wrap mb-2">
-            <strong class="">$120.00</strong>
-          </div>
-          <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-            <a href="#" class="btn btn-outline-primary w-100">Add to cart</a>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-3 col-md-6 col-sm-6">
-      <div class="card px-4 border shadow-0">
-        <a href="#" class="mt-3">
-          <img src="https://i.dummyjson.com/data/products/1/thumbnail.jpg" class="card-img-top rounded-2" />
-        </a>
-        <div class="card-body d-flex flex-column pt-3 border-top">
-          <a href="#" class="nav-link">Men's Denim Jeans Shorts</a>
-          <div class="price-wrap mb-2">
-            <strong class="">$80.50</strong>
-          </div>
-          <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-            <a href="#" class="btn btn-outline-primary w-100">Add to cart</a>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="row" id="recommend-items">
   </div>
 </div>
 <script type="text/javascript" src="{% static 'js/cart.js' %}"></script>
 <script type="text/javascript">
   $().ready(function () {
-    let listUpdate = $(".item-price")
-    listUpdate.on('change', 'input', function (event) {
+    fetch('https://dummyjson.com/products?limit=4&skip=2')
+      .then(res => res.json())
+      .then(data => {
+        const html = data.products
+          .map(product => {
+            return `
+          <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card px-4 mb-4 mb-lg-0">
+              <a href="#" class="mt-3 object-fit-contain">
+                <img src="${product.thumbnail}" class="card-img-top rounded-2" />
+              </a>
+              <div class="card-body d-flex flex-column pt-2">
+                <a href="#" class="nav-link">${product.title}</a>
+                <div class="price-wrap mb-2">
+                  <strong class="">$${product.price}</strong>
+                </div>
+                <div class="d-flex align-items-end px-0 pb-0 mt-auto">
+                  <a href="#" class="btn btn-outline-primary w-100">Add to cart</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          `
+          })
+        $("#recommend-items").html(html)
+      });
+
+    $(".remove").click(function (event) {
+      event.preventDefault()
+      let productId = $(this).parents('.product-card').find('div > input').data('product')
+      if (user === "AnonymousUser") {
+        //for GUEST   
+        updateCookieItem({ id: productId, quantity: 0, action: "change" })
+      }
+      else {
+        //for USER
+        updateUserOrder({ id: productId, quantity: 0, action: "change" })
+          .then((data) => {
+            let [order, item] = [data["order"], data["item"]]
+            let priceOrderTotal = $("#price_summary").find(".price_total")
+            $("#cart-badge").html(order["get_cart_items"])
+            priceOrderTotal.html(`$${(order["get_cart_total"]).toFixed(2)}`)
+          })
+      }
+      $(this).parents('.product-card').remove()
+    })
+
+    $(".item-price-info").on('change', 'input', function (event) {
       event.preventDefault()
       let productId = $(this).data('product')
       let item = parseInt($(this).val())
       let action = "change"
       if (user === "AnonymousUser") {
-        //for GUEST
-        addCookieItem(productId, action)
+        //for GUEST   
+        updateCookieItem({ id: productId, quantity: item, action: "change" })
       }
       else {
         //for USER
         updateUserOrder({ id: productId, quantity: item, action: "change" })
           .then((data) => {
-            $("#cart-badge").html(data["order"]["get_cart_items"])
-            $(this).parents('.item-price').find('.get_total').html(`$${(data["item"]["quantity"] * 100).toFixed(2)}`)
-            $("#price_summary").find(".price_total").html(`$${(data["order"]["get_cart_total"]).toFixed(2)}`)
+            let [order, item] = [data["order"], data["item"]]
+            let price = parseFloat($(this).parents('.item-price-info').find('.item-price > span').html())
+            let priceItemTotal = $(this).parents('.item-price-info').find('.get_total')
+            let priceOrderTotal = $("#price_summary").find(".price_total")
+
+            $("#cart-badge").html(order["get_cart_items"])
+            priceItemTotal.html(`$${(item["quantity"] * price).toFixed(2)}`)
+            priceOrderTotal.html(`$${(order["get_cart_total"]).toFixed(2)}`)
           })
       }
     })
