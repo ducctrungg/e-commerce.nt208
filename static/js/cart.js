@@ -1,4 +1,4 @@
-function addCookieItem(data) {
+function updateCookieItem(data) {
   let [productID, quantity, action] = [data['id'], data['quantity'], data['action']]
   if (action === 'add') {
     if (cart[productID] == undefined) {
@@ -10,9 +10,6 @@ function addCookieItem(data) {
   }
   if (action === 'change') {
     cart[productID]['quantity'] = quantity
-  }
-  if (action === 'minus') {
-
   }
   if (action === 'remove') {
     cart[productID]['quantity'] -= 1

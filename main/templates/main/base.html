@@ -34,6 +34,11 @@
       </a>
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav me-auto mb-2 mb-md-0">
+          <li class="nav-item d-block d-md-none"><a href="{% url 'account' %}"
+              class="nav-link text-dark px-2">Account</a></li>
+          <li class="nav-item d-block d-md-none"><a href="{% url 'cart' %}" class="nav-link text-dark px-2">Cart</a>
+          </li>
+          <hr>
           <li class="nav-item"><a href="{% url 'home' %}" class="nav-link text-dark px-2">Home</a></li>
           <li class="nav-item"><a href="{% url 'home' %}" class="nav-link text-dark px-2">Product</a></li>
         </ul>
@@ -49,16 +54,16 @@
         </span>
       </a>
       {% if request.user.is_authenticated == False %}
-      <a href="{% url 'login' %}" class="d-block link-body-emphasis text-decoration-none text-dark-emphasis">
+      <a href="{% url 'login' %}" class="d-none d-md-block link-body-emphasis text-decoration-none text-dark-emphasis">
         <i class="bi bi-person-circle fs-3"></i>
       </a>
       {% else %}
       <div class="dropdown text-end ms-4">
-        <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown"
-          aria-expanded="false">
+        <a href="#" class="d-none d-md-block link-body-emphasis text-decoration-none dropdown-toggle"
+          data-bs-toggle="dropdown" aria-expanded="false">
           <i class="bi bi-person-circle fs-3"></i>
         </a>
-        <ul class="dropdown-menu text-small">
+        <ul class="dropdown-menu dropdown-menu-end text-small">
           {% if request.user.groups.exists %}
           {% for group in request.user.groups.all %}
           {% if group.name == 'admin' %}
