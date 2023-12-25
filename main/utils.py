@@ -25,6 +25,7 @@ def getCookieCartData(request):
                     'name': product.name,
                     'imageURL': product.imageURL,
                     'price': product.price,
+                    'slug': product.slug,
                 },
                 'quantity': cart[i]["quantity"],
                 'get_total': total
