@@ -9,27 +9,32 @@ class OrderForm(ModelForm):
         model = Order
         fields = '__all__'
 
-
 class ProductForm(ModelForm):
+    urlFile = forms.URLField(label="urlfile", max_length=200, required=False)
     class Meta:
         model = Product
         fields = ['name', 'price', 'description', 'image', 'type']
-
+    
+    def clean_price(self):
+        price = self.cleaned_data["price"]
+        if price <= 0:
+            self.add_error("email", "Invalid product price")
+            return
+        return price
+            
 
 class OrderItemForm(ModelForm):
     class Meta:
         model = OrderItem
         fields = '__all__'
 
-
 class LoginForm (forms.Form):
     username = forms.CharField(label="username", max_length=200)
     password = forms.CharField(label="password", widget=forms.PasswordInput())
 
-
 class RegisterForm (ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(RegisterForm, self).__init__(*args, **kwargs)
+    def __init__(self):
+        super(RegisterForm, self).__init__()
         for name in self.fields.keys():
             self.fields[name].widget.attrs.update({
                 'class': 'form-control',
@@ -58,7 +63,7 @@ class RegisterForm (ModelForm):
             return
         if not phone.isdigit():
             self.add_error("phone", "Phonenumber must only have number")
-        return True
+        return phone
 
     def clean(self):
         cleaned_data = super(RegisterForm, self).clean()

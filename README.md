@@ -7,7 +7,6 @@ $ git checkout dev
 
 Build với môi trường venv
 ```
-$ cd backend
 $ python -m venv .  
 $ python -m pip install -r requirements.txt
 $ python -m django --version
