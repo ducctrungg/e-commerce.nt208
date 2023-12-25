@@ -23,7 +23,7 @@
       <img src="{% static 'images/carousel-1.jpg '%}" class="d-block w-100">
     </div>
     <div class="carousel-item">
-      <img src="{% static 'images/carousel.jpg '%}" class="d-block w-100">
+      <img src="{% static 'images/carousel-2.jpg '%}" class="d-block w-100">
     </div>
   </div>
   <button class="carousel-control-prev" type="button" data-bs-target="#carouselHeader" data-bs-slide="prev">
@@ -65,13 +65,13 @@
       event.preventDefault()
       let productId = $(this).data('product')
       if (user === "AnonymousUser") {
-        addCookieItem({ id: productId, quantity: 1, action: "add" })
+        updateCookieItem({ id: productId, quantity: 1, action: "add" })
       }
       else {
         updateUserOrder({ id: productId, quantity: 1, action: "add" })
           .then((data) => {
             if (data["status"] === "Success") {
-              $("#cart-badge").html(data["order"]["get_cart_items"])
+              $(".cart-badge").html(data["order"]["get_cart_items"])
             }
           })
       }

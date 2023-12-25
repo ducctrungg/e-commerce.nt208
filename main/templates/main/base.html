@@ -36,7 +36,11 @@
         <ul class="navbar-nav me-auto mb-2 mb-md-0">
           <li class="nav-item d-block d-md-none"><a href="{% url 'account' %}"
               class="nav-link text-dark px-2">Account</a></li>
-          <li class="nav-item d-block d-md-none"><a href="{% url 'cart' %}" class="nav-link text-dark px-2">Cart</a>
+          <li class="nav-item d-block d-md-none position-relative"><a href="{% url 'cart' %}" class="nav-link text-dark px-2">Cart
+            <span class="d-block d-md-none position-absolute top-50 end-0 translate-middle badge rounded-pill bg-danger cart-badge">
+              {{order.get_cart_items}}
+            </span>
+          </a>
           </li>
           <hr>
           <li class="nav-item"><a href="{% url 'home' %}" class="nav-link text-dark px-2">Home</a></li>
@@ -49,7 +53,7 @@
 
       <a class="position-relative me-3 text-dark-emphasis d-none d-md-block" href="{% url 'cart' %}">
         <i class="bi bi-cart2 fs-4"></i>
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-badge">
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-badge">
           {{order.get_cart_items}}
         </span>
       </a>
