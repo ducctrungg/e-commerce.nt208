@@ -65,7 +65,7 @@
       event.preventDefault()
       let productId = $(this).data('product')
       if (user === "AnonymousUser") {
-        addCookieItem({ id: productId, quantity: 1, action: "add" })
+        updateCookieItem({ id: productId, quantity: 1, action: "add" })
       }
       else {
         updateUserOrder({ id: productId, quantity: 1, action: "add" })
