@@ -3,7 +3,6 @@ from django import forms
 from .models import *
 import re
 
-
 class OrderForm(ModelForm):
     class Meta:
         model = Order
@@ -18,7 +17,7 @@ class ProductForm(ModelForm):
     def clean_price(self):
         price = self.cleaned_data["price"]
         if price <= 0:
-            self.add_error("email", "Invalid product price")
+            self.add_error("price", "Invalid product price")
             return
         return price
             
@@ -33,8 +32,8 @@ class LoginForm (forms.Form):
     password = forms.CharField(label="password", widget=forms.PasswordInput())
 
 class RegisterForm (ModelForm):
-    def __init__(self):
-        super(RegisterForm, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(RegisterForm, self).__init__(*args, **kwargs)
         for name in self.fields.keys():
             self.fields[name].widget.attrs.update({
                 'class': 'form-control',

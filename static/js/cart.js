@@ -10,6 +10,9 @@ function updateCookieItem(data) {
   }
   if (action === 'change') {
     cart[productID]['quantity'] = quantity
+    if (cart[productID]['quantity'] <= 0) {
+      delete cart[productID]
+    }
   }
   if (action === 'remove') {
     cart[productID]['quantity'] -= 1
