@@ -236,7 +236,7 @@ def processOrder(request):  # save order for checkout
         order.transaction_id = transaction_id
         order.date_ordered = datetime.datetime.now()
         order.save()
-        return redirect(' ')
+        return redirect('home')
     return JsonResponse("Payment submitted", safe=False)
 
 
@@ -279,24 +279,17 @@ def createOrderItem(request):   # admin create
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def createProduct(request):  # admin create
-    form = ProductForm()
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
+            product = form.save(commit=False)
             name = form.cleaned_data['name']
-            price = form.cleaned_data['price']
-            if price < 0:   # validate data
-                messages.error(request, 'Invalid product price')
-                return redirect('create_product')
-            form.save()
-            product = Product.objects.get(name=name)
             product.slug = slugify(name)
             product.save()
             return redirect('admin')
-    context = {
-        'form': form,
-    }
-    return render(request, 'main/product_form.html', context)
+    else:
+        form = ProductForm()
+    return render(request, 'main/product_form.html', {"form": form})
 
 
 @login_required(login_url='login')
