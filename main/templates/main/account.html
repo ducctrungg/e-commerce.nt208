@@ -2,37 +2,126 @@
 {% load static %}
 {% block content %}
 
-<form method="POST" action="">
-    {% csrf_token %}
+<style>
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+</style>
 
-    <div class="mb-3">
-        <label class="form-label" for="username">Username</label>
-        <label class="form-label" for="username">{{customer.user.username}}</label>
-        <div class="mt-2 text-danger fw-bold">
+<div class="user-account py-5">
+  <div class="container">
+    <div class="row">
+      <nav class="col-12 col-md-5 col-sm-12 col-lg-3">
+        <div class="nav flex-column nav-pills mb-3" role="tablist">
+          <a class="nav-link active" role="presentation" id="pills-account-tab" data-bs-toggle="pill"
+            data-bs-target="#pills-account" type="button" role="tab" aria-controls="pills-account"
+            aria-selected="true">Account</a>
+
+          <a class="nav-link" role="presentation" id="pills-password-tab" data-bs-toggle="pill"
+            data-bs-target="#pills-password" type="button" role="tab" aria-controls="pills-password"
+            aria-selected="false">Password</a>
+
+          <a class="nav-link" role="presentation" id="pills-setting-tab" data-bs-toggle="pill"
+            data-bs-target="#pills-comingsoon" type="button" role="tab" aria-controls="pills-comingsoon"
+            aria-selected="false">Settings</a>
+
+          <a class="nav-link" role="presentation" id="pills-orders-tab" data-bs-toggle="pill"
+            data-bs-target="#pills-comingsoon" type="button" role="tab" aria-controls="pills-comingsoon"
+            aria-selected="false">Orders</a>
+
+          <a class="nav-link" role="presentation" id="pills-logout-tab" data-bs-toggle="pill"
+            data-bs-target="#pills-comingsoon" type="button" role="tab" aria-controls="pills-comingsoon"
+            aria-selected="false">Log Out</a>
         </div>
-    </div>
-    <div class="mb-3">
-        <label class="form-label" for="password">Password</label>
-        <input type="password" name="password" id="password" >
-        <div class="mt-2 text-danger fw-bold">
+      </nav>
+
+      <div class="col-12 col-md-7 col-sm-12 col-lg-9 tab-content">
+        <div class="tab-pane fade show active" id="pills-account" aria-labelledby="pills-account-tab" role="tabpanel">
+          <h4 class="mb-4">Account information</h4>
+          <form method="POST" novalidate>
+            {% csrf_token %}
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label" for="firstName">First Name</label>
+                <input type="text" class="form-control" id="firstName" disabled>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="lastName">Last Name</label>
+                <input type="text" class="form-control" id="lastName" disabled>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="{{ form.name.id_for_label }}">Username</label>
+              {{form.name}}
+              <div class="mt-1 text-danger fw-bold">
+                {{ form.name.errors }}
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="{{ form.email.id_for_label }}">Email</label>
+              {{form.email}}
+              <div class="mt-1 text-danger fw-bold">
+                {{ form.email.errors }}
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="{{ form.phone.id_for_label }}">Phonenumber</label>
+              {{form.phone}}
+              <div class="mt-1 text-danger fw-bold">
+                {{ form.phone.errors }}
+              </div>
+            </div>
+            <button type="submit" value="Change info" class="btn btn-dark py-2">Save Changes</button>
+          </form>
         </div>
+
+        <div class="tab-pane fade" id="pills-password" role="tabpanel" aria-labelledby="pills-password-tab">
+          <h4 class="mb-4">Password change</h4>
+          <form method="POST" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label" for="password">Current password</label>
+              <input type="password" class="form-control" id="password" placeholder="Enter current password">
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="{{ form.password1.id_for_label }}">Password</label>
+              {{form.password1}}
+              <div class="mt-1 text-danger fw-bold">
+                {{ form.password1.errors }}
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="{{ form.password2.id_for_label }}">Password confirm</label>
+              {{form.password2}}
+              <div class="mt-1 text-danger fw-bold">
+                {{form.password2.errors}}
+              </div>
+            </div>
+            <button type="submit" value="Change password" class="btn btn-dark py-2">Save Changes</button>
+          </form>
+        </div>
+        <div class="tab-pane fade" id="pills-comingsoon" role="tabpanel"
+          aria-labelledby="pills-setting-tab pills-orders-tab pills-logout-tab">
+          <h3>Coming soon...</h3>
+        </div>
+      </div>
     </div>
-    <div class="mb-3">
-        <label class="form-label" for="name">Name</label>
-        <input type="name" name="name" id="name" value="{{customer.name}}">
-    </div>  
-    <div class="mb-3">
-        <label class="form-label" for="email">Email</label>
-        <input type="email" name="email" id="email" value="{{customer.email}}">
-    </div>  
-    <div class="mb-3">
-        <label class="form-label" for="phone">Phonenumber</label>
-        <input type="phone" name="phone" id="phone" value="{{customer.phone}}">
-    </div>
-    {% for message in messages %}
-    <p id="messages mt-2 text-danger fw-bold">{{message}}</p>
-    {% endfor %}
-    <button class="btn btn-primary w-10 py-2" type="submit" value="Save">Save</button>
-</form>
+  </div>
+</div>
+
+<script>
+  $().ready(() => {
+    $('#id_name').attr('placeholder', 'Enter username');
+    $('#id_name').val("{{customer.name}}");
+    $('#id_email').attr('placeholder', 'Enter email');
+    $('#id_email').val("{{customer.email}}");
+    $('#id_phone').attr('placeholder', 'Enter phone');
+    $('#id_phone').val("{{customer.phone}}");
+    $('#id_password1').attr('placeholder', 'Enter password');
+    $('#id_password2').attr('placeholder', 'Re-enter Password');
+  })
+</script>
 
 {% endblock content %}

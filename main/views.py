@@ -85,30 +85,16 @@ def registerPage(request):
 def accountPage(request):
     customer = request.user.customer    # render the page base on user
     if request.method == 'POST':
-        password = request.POST.get('password')
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
-        if not validate_name(name):  # validate data
-            messages.error(request, 'Invalid name')
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            customer.name = form.cleaned_data["name"]
+            customer.email = form.cleaned_data["email"]
+            customer.phone = form.cleaned_data["phone"]
+            customer.save()
             return redirect('account')
-        if not validate_email(email):
-            messages.error(request, 'Invalid email address')
-            return redirect('account')
-        if not validate_phone(phone):
-            messages.error(request, 'Invalid phone number')
-            return redirect('account')
-        if password != "":  # check if the password changed | if changed set new password | if not skip set new password
-            customer.user.set_password(password)
-        customer.name = name
-        customer.email = email
-        customer.phone = phone
-        customer.save()
-        return redirect('account')
-    context = {
-        'customer': customer
-    }
-    return render(request, 'main/account.html', context)
+    else: 
+        form = RegisterForm()
+    return render(request, 'main/account.html', {"form": form, "customer": customer})
 
 
 @login_required(login_url='login')
@@ -338,7 +324,6 @@ def updateOrder(request, pk):   # admin update
         'form': form,
         'orderitems': orderitems,
         'order': order
-
     }
     return render(request, 'main/order_form.html', context)
 
@@ -482,3 +467,6 @@ def dashboardPage(request):
 def handling_404Page(request, exception):
     context = {}
     return render(request, 'main/404Page.html', context)
+
+def productList(request):
+    return render(request, 'main/products.html')

@@ -37,7 +37,6 @@ def getCookieCartData(request):
 
     return {'items': items, 'order': order}
 
-
 def getCartData(request):
     if request.user.is_authenticated:
         customer = request.user.customer
